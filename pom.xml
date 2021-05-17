@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.nanthrax.test</groupId>
+    <artifactId>radar-bundle</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-log4j2</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix</groupId>
+            <artifactId>radar</artifactId>
+            <version>0.52.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <executions>
+                    <execution>
+                        <id>log4j-plugin-processor</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <proc>only</proc>
+                            <annotationProcessors>
+                                <annotationProcessor>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</annotationProcessor>
+                            </annotationProcessors>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.1</version>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Fragment-Host>org.ops4j.pax.logging.pax-logging-log4j2</Fragment-Host>
+                        <Export-Package>!*</Export-Package>
+                        <Import-Package>
+                            !com.netflix*,
+                            !io.sentry*,
+                            !com.fasterxml.jackson*,
+                            org.osgi.framework;version="[1.8,2.0)",
+                            org.apache.logging.log4j*;version="[2,3)";resolution:=optional,
+                            *
+                        </Import-Package>
+                        <Private-Package>
+                            com.netflix*,
+                            io.sentry*,
+                            com.fasterxml.jackson*
+                        </Private-Package>
+                        <Include-Resource>
+                            {maven-resources},
+                            META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat=target/classes/META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat
+                        </Include-Resource>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
